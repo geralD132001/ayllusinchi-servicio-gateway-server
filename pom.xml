@@ -15,7 +15,7 @@
     <name>ayllusinchi-servicio-gateway-server</name>
     <description>ayllusinchi-servicio-gateway-server</description>
     <properties>
-        <java.version>11</java.version>
+        <java.version>17</java.version>
         <spring-cloud.version>2020.0.3</spring-cloud.version>
     </properties>
     <dependencies>

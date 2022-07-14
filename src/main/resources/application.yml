@@ -1,0 +1,89 @@
+resilience4j:
+  circuitbreaker:
+    configs:
+      defecto:
+        sliding-window-size: 6
+        failure-rate-threshold: 50
+        wait-duration-in-open-state: 20s
+        permitted-number-of-calls-in-half-open-state: 4
+        slow-call-rate-threshold: 50
+        slow-call-duration-threshold: 2s
+    instances:
+      proyecto:
+        base-config: defecto
+  timelimiter:
+    configs:
+      defecto:
+        timeout-duration: 2s
+    instances:
+      proyecto:
+        base-config: defecto
+
+spring:
+  cloud:
+    gateway:
+      routes:
+        - id: servicio-proyecto
+          uri: lb://servicio-proyecto
+          predicates:
+            - Path=/api/proyecto/**
+          filters:
+            - name: CircuitBreaker
+              args:
+                name: proyecto
+                statusCodes: 500
+                fallbackUri: forward:/api/detalle/ver/13/cantidad/4
+            - StripPrefix=2
+            - EjemploCookie=Hola mi mensaje personalizado, usuario, GeraldSandy
+        - id: servicio-detalle
+          uri: lb://servicio-detalle
+          predicates:
+            - Path=/api/detalle/**
+          filters:
+            - StripPrefix=2
+            - AddRequestHeader=token-request, 123456
+            - AddResponseHeader=token-response, 131313
+            - SetResponseHeader=Content-Type, text/plain
+            - AddRequestParameter=nombre, gerald
+        - id: servicio-oauth
+          uri: lb://servicio-oauth
+          predicates:
+            - Path=/api/security/**
+          filters:
+            - StripPrefix=2
+        - id: servicio-usuarios
+          uri: lb://servicio-usuarios
+          predicates:
+            - Path=/api/usuarios/**
+          filters:
+            - StripPrefix=2
+        - id: servicio-ubigeo
+          uri: lb://servicio-ubigeo
+          predicates:
+            - Path=/api/ubigeo/**
+          filters:
+            - StripPrefix=2
+        - id: servicio-sedes
+          uri: lb://servicio-sedes
+          predicates:
+            - Path=/api/sedes/**
+          filters:
+            - StripPrefix=2
+        - id: servicio-asistencia
+          uri: lb://servicio-asistencia
+          predicates:
+            - Path=/api/asistencia/**
+          filters:
+            - StripPrefix=2
+        - id: servicio-beneficiarios
+          uri: lb://servicio-beneficiarios
+          predicates:
+            - Path=/api/beneficiarios/**
+          filters:
+            - StripPrefix=2
+        - id: servicio-estudiante
+          uri: lb://servicio-estudiante
+          predicates:
+            - Path=/api/estudiante/**
+          filters:
+            - StripPrefix=2
